@@ -1216,10 +1216,10 @@
     queue-microtask "^1.2.3"
     sdp-transform "^2.14.1"
 
-"@dyteinternals/utils@1.8.1":
-  version "1.8.1"
-  resolved "https://registry.npmjs.org/@dyteinternals/utils/-/utils-1.8.1.tgz"
-  integrity sha512-rYTJm/LQ5j/UiXSFeDCFeAenrxmkewzwstO8UYBd3WMK6MxFY1NjADo5fMUSe8Zf5XpsieqwybKe3oH8VMdh4g==
+"@dyteinternals/utils@^1.9.3":
+  version "1.9.3"
+  resolved "https://registry.npmjs.org/@dyteinternals/utils/-/utils-1.9.3.tgz"
+  integrity sha512-i3lI/C2DNnO0jRGHsfEIss7en8KNstoVqMfnD+9yXQSd0PAgjQGgfdX3oV9XfpFABm+5qZ49YBNZGZEa2ulJng==
   dependencies:
     axios "^0.25.0"
     lodash-es "^4.17.21"
@@ -1231,12 +1231,12 @@
   dependencies:
     "@dytesdk/ui-kit" "1.50.1"
 
-"@dytesdk/react-web-core@^1.29.4":
-  version "1.29.4"
-  resolved "https://registry.npmjs.org/@dytesdk/react-web-core/-/react-web-core-1.29.4.tgz"
-  integrity sha512-TRcGoE28Cgh15mhHXSZR+3IVo8uWCF8b6QcVvkk4pzp/xzLUokjJadF2SjXBuMEZEM+XP7wopHSNntAavWDBCg==
+"@dytesdk/react-web-core@^1.32.0":
+  version "1.32.0"
+  resolved "https://registry.npmjs.org/@dytesdk/react-web-core/-/react-web-core-1.32.0.tgz"
+  integrity sha512-Gf5Hs+PNzylbb5QoF9UNbmFStNoIv0p6n23wiFoIEOOD+GYcNqoodB20U/YzWaqOGOaHPCU3rA6pkubZt5Dj1w==
   dependencies:
-    "@dytesdk/web-core" "^1.12.4"
+    "@dytesdk/web-core" "^1.15.0"
 
 "@dytesdk/ui-kit@1.50.1":
   version "1.50.1"
@@ -1249,13 +1249,13 @@
     lodash-es "^4.17.21"
     resize-observer-polyfill "^1.5.1"
 
-"@dytesdk/web-core@^1.12.4":
-  version "1.12.4"
-  resolved "https://registry.npmjs.org/@dytesdk/web-core/-/web-core-1.12.4.tgz"
-  integrity sha512-jomoWHfybVUL0VNNxn4iUvMYvuig1EmdL6m4XH9met0BZ9lZh4rHvGrKlADGwjlulwO6SXIVlz9G4nPJe2j5rg==
+"@dytesdk/web-core@^1.15.0":
+  version "1.15.0"
+  resolved "https://registry.npmjs.org/@dytesdk/web-core/-/web-core-1.15.0.tgz"
+  integrity sha512-IofSUOgVKzTDrsvXuvs7pdoPiv1lTb8Z1QMq1PnxRzeVAnqhbllctQB+P5dXIg0xaX7j3W9MAQ16lnTjPj0Oqg==
   dependencies:
     "@dyteinternals/mediasoup-client" "3.6.83"
-    "@dyteinternals/utils" "1.8.1"
+    "@dyteinternals/utils" "^1.9.3"
     "@opentelemetry/api" "^1.4.1"
     "@opentelemetry/context-zone-peer-dep" "^1.10.0"
     "@opentelemetry/exporter-trace-otlp-http" "^0.36.0"

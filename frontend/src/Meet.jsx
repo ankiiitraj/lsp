@@ -37,11 +37,24 @@ const Meet = () => {
                 authToken,
             });
             setUserToken(authToken)
+            setTimeout(() => {goLive()}, 30000)
         }
     }
 
+    const goLive = async () => {
+        const res = await fetch(`${SERVER_URL}/go_live/${meetingId}`, {
+            method: "POST",
+            body: JSON.stringify({ name: "name-something" }),
+            headers: { "Content-Type": "application/json" }
+        })
+        const resJson = await res.json()
+        console.log(resJson)
+    }
+
     useEffect(() => {
-        if (meetingId && !userToken) joinMeetingId()
+        if (meetingId && !userToken) {
+            joinMeetingId()
+        }
         isAdmin()
     }, [])
 

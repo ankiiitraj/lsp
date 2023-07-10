@@ -92,9 +92,24 @@ def connect_to_db():
 async def root():
     return {"message": "Hello World"}
 
+@app.post("/is_admin/")
+async def multiple_faces_list(admin: AdminProp):
+    conn = connect_to_db()
+    cur = conn.cursor()
+    cur.execute("SELECT count(1) FROM meeting_host_info WHERE meeting_id = %s AND admin_id = %s", (admin.meeting_id, admin.admin_id,))
+    
+    count = cur.fetchone()[0]
+    
+    if(count > 0):
+        return { "admin": True }
+    else:
+        return { "admin": False }
+
 @app.post("/meetings")
 async def create_meeting(meeting: Meeting):
-    response = await DYTE_API.post('/meetings', json=meeting.dict())
+    payload = meeting.dict()
+    # payload.update({"live_stream_on_start": True})
+    response = await DYTE_API.post('/meetings', json=payload)
     if response.status_code >= 300:
         raise HTTPException(status_code=response.status_code, detail=response.text)
     admin_id = ''.join(random.choices('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', k=32)) + '@@' + generate_a_name()
@@ -117,37 +132,37 @@ async def add_participant(meetingId: str, participant: Participant):
     client_specific_id = f"react-samples::{participant.name.replace(' ', '-')}-{str(uuid.uuid4())[0:7]}"
     payload = participant.dict()
     payload.update({"client_specific_id": client_specific_id})
-    payload.update({"live_stream_on_start": True})
     del payload['meeting_id']
     resp = await DYTE_API.post(f'/meetings/{meetingId}/participants', json=payload)
     if resp.status_code > 200:
         raise HTTPException(status_code=resp.status_code, detail=resp.text)
     return resp.text
 
-@app.post("/go_live/{meetingId}")
-async def go_live(meetingId: str, name: str):
-    conn = connect_to_db()
-    cur = conn.cursor()
-    cur.execute("CREATE TABLE IF NOT EXISTS livestream_t (ts TIMESTAMP, meeting_id VARCHAR(200))")
-    cur.execute("SELECT COUNT(1) FROM livestream_t WHERE meeting_id=%s", (meetingId))
-    count = cur.fetchone()[0]
+class GoLive(BaseModel):
+    name: str
 
-    if count == 0:
-        payload = {}
-        payload.add('name', name)
-        response = await DYTE_API.post(f'/meetings/{meetingId}/livestreams', json=payload)
-        cur.execute("INSERT INTO livestream_t (ts, meeting_id) VALUES (current_timestamp, %s)", (meetingId))
-        conn.commit()
-        cur.close()
-        conn.close()
-        if response.status_code > 200:
-            raise HTTPException(status_code=response.status_code, detail=response.text)
-        return response.json()
-    else:
-        conn.commit()
-        cur.close()
-        conn.close()
-        return {"message": "livestream already started"}
+@app.post("/go_live/{meetingId}")
+async def go_live(meetingId: str, name: GoLive):
+    # conn = connect_to_db()
+    # cur = conn.cursor()
+    # cur.execute("CREATE TABLE IF NOT EXISTS livestream_t (ts TIMESTAMP, meeting_id VARCHAR(200))")
+    # cur.execute("SELECT COUNT(1) FROM livestream_t WHERE meeting_id=%s", (meetingId))
+    # count = cur.fetchone()[0]
+
+    # if count == 0:
+    response = await DYTE_API.post(f'/meetings/{meetingId}/livestreams', json=name.dict())
+    # cur.execute("INSERT INTO livestream_t (ts, meeting_id) VALUES (current_timestamp, %s)", (meetingId))
+    # conn.commit()
+    # cur.close()
+    # conn.close()
+    if response.status_code > 200:
+        raise HTTPException(status_code=response.status_code, detail=response.text)
+    return response.json()
+    # else:
+    #     conn.commit()
+    #     cur.close()
+    #     conn.close()
+    #     return {"message": "livestream already started"}
 
 class LivestreamsPayload(BaseModel):
     offset: str

@@ -4,7 +4,8 @@
   "private": true,
   "dependencies": {
     "@dytesdk/react-ui-kit": "^1.50.1",
-    "@dytesdk/react-web-core": "^1.29.4",
+    "@dytesdk/react-web-core": "^1.32.0",
+    "@dytesdk/web-core": "^1.15.0",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
