@@ -3,7 +3,7 @@ import ImageUploader from "./ImageInput";
 import Meet from "./Meet";
 
 
-const SERVER_URL = process.env.SERVER_URL || "http://localhost:8000"
+const SERVER_URL = process.env.REACT_APP_SERVER_URL || "http://localhost:8000"
 
 const Stage = () => {
     const [isAdminBool, setAdminBool] = useState(null);

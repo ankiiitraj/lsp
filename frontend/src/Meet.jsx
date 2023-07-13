@@ -6,12 +6,10 @@ import { useDyteClient } from '@dytesdk/react-web-core';
 
 import Heading from './Heading';
 import { joinMeeting } from './utils'
+import LiveStreamInteraction from './Livestreams/LiveStreamInteraction';
 
 // Constants
-const SERVER_URL = process.env.SERVER_URL || "http://localhost:8000"
-let LAST_BACKEND_PING_TIME = 0;
-const DETECT_FACES_ENDPOINT = `${SERVER_URL}/same_faces`;
-const TIME_BETWEEN_BACKEND_PINGS = 15000;
+const SERVER_URL = process.env.REACT_APP_SERVER_URL || "http://localhost:8000"
 
 const Meet = () => {
     const meetingEl = useRef();
@@ -32,12 +30,11 @@ const Meet = () => {
 
     const joinMeetingId = async () => {
         if (meetingId) {
-            const authToken = await joinMeeting(meetingId)
+            const authToken = await joinMeeting(meetingId, window.localStorage.getItem("adminId"))
             await initMeeting({
                 authToken,
             });
             setUserToken(authToken)
-            setTimeout(() => {goLive()}, 30000)
         }
     }
 
@@ -70,7 +67,7 @@ const Meet = () => {
         <div style={{ height: "96vh", width: "100vw", display: "flex" }}>
             {userToken &&
                 <>
-                    {isAdminBool ? <div style={{ width: "60vw", height: "96vh" }}><DyteMeeting mode='fill' meeting={meeting} ref={meetingEl} /></div> : <div style={{ width: "100vw", height: "96vh" }}><Heading text={"Proctoring Candidate Interface"} /><DyteMeeting mode='fill' meeting={meeting} ref={meetingEl} /></div>}
+                    {isAdminBool ? <div style={{ width: "90vw" }}><DyteMeeting mode='fill' meeting={meeting} ref={meetingEl} /><LiveStreamInteraction meetingId={meetingId} /></div> : <div style={{ width: "100vw", height: "96vh" }}><DyteMeeting mode='fill' meeting={meeting} ref={meetingEl} /><LiveStreamInteraction meetingId={meetingId} /></div>}
                 </>
             }
         </div>

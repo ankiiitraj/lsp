@@ -1224,12 +1224,12 @@
     axios "^0.25.0"
     lodash-es "^4.17.21"
 
-"@dytesdk/react-ui-kit@^1.50.1":
-  version "1.50.1"
-  resolved "https://registry.npmjs.org/@dytesdk/react-ui-kit/-/react-ui-kit-1.50.1.tgz"
-  integrity sha512-JwQNhPfVLwSzHfqbBu/ASkOC2FCXg7xMbsTxYrukHpGO8B+TPEPY/otCPwrBwvaHr2HyKkTCxqad+PZ9nXZXjg==
+"@dytesdk/react-ui-kit@^1.53.0-staging.7":
+  version "1.53.0-staging.7"
+  resolved "https://registry.npmjs.org/@dytesdk/react-ui-kit/-/react-ui-kit-1.53.0-staging.7.tgz"
+  integrity sha512-aFBCJroRLzAnuFlWO9PBvN3JNm4HcmKTukrYP0TuwM3Q4now9Tl+rpM+eAvpw4m0f9u5vYsZckPZFAurs5xp6Q==
   dependencies:
-    "@dytesdk/ui-kit" "1.50.1"
+    "@dytesdk/ui-kit" "1.53.0-staging.7"
 
 "@dytesdk/react-web-core@^1.32.0":
   version "1.32.0"
@@ -1238,10 +1238,10 @@
   dependencies:
     "@dytesdk/web-core" "^1.15.0"
 
-"@dytesdk/ui-kit@1.50.1":
-  version "1.50.1"
-  resolved "https://registry.npmjs.org/@dytesdk/ui-kit/-/ui-kit-1.50.1.tgz"
-  integrity sha512-7ktphT8EcnZ4gyVEiSlrCNaMXHzsxIyvuzRMEcvyKE7ZdQhkV95iWnzt82p79cr6rFc/FAUCyi+nEmXd4Ng60A==
+"@dytesdk/ui-kit@^1.53.0-staging.7", "@dytesdk/ui-kit@1.53.0-staging.7":
+  version "1.53.0-staging.7"
+  resolved "https://registry.npmjs.org/@dytesdk/ui-kit/-/ui-kit-1.53.0-staging.7.tgz"
+  integrity sha512-HaGipvJPXtZvy1yOstu3pWK/j/AQ4+Wc1CZ6gD/dfSnAihe2cFcfwfaavdgE5PNSmp09khA2Aq0d0LTmHES/bw==
   dependencies:
     "@floating-ui/dom" "^1.1.0"
     "@stencil/core" "^2.20.0"

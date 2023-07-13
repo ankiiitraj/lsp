@@ -1,9 +1,10 @@
-const SERVER_URL = process.env.SERVER_URL || "http://localhost:8000"
+const SERVER_URL = process.env.REACT_APP_SERVER_URL || "http://localhost:8000"
 
-const joinMeeting = async (id) => {
+const joinMeeting = async (id, isAdmin) => {
+    const preset = isAdmin ? 'group_call_host' : 'group_call_participant'
     const res = await fetch(`${SERVER_URL}/meetings/${id}/participants`, {
         method: "POST",
-        body: JSON.stringify({ name: "new user", preset_name: "group_call_host", meeting_id: id }),
+        body: JSON.stringify({ name: "new user", preset_name: preset, meeting_id: id }),
         headers: { "Content-Type": "application/json" }
     })
     const resJson = await res.json()

@@ -10,7 +10,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from imgur import upload_image
 from utils import generate_a_name
-import face_recognition
 import psycopg2
 
 import os
@@ -138,44 +137,44 @@ async def add_participant(meetingId: str, participant: Participant):
         raise HTTPException(status_code=resp.status_code, detail=resp.text)
     return resp.text
 
-class GoLive(BaseModel):
-    name: str
-
-@app.post("/go_live/{meetingId}")
-async def go_live(meetingId: str, name: GoLive):
-    # conn = connect_to_db()
-    # cur = conn.cursor()
-    # cur.execute("CREATE TABLE IF NOT EXISTS livestream_t (ts TIMESTAMP, meeting_id VARCHAR(200))")
-    # cur.execute("SELECT COUNT(1) FROM livestream_t WHERE meeting_id=%s", (meetingId))
-    # count = cur.fetchone()[0]
-
-    # if count == 0:
-    response = await DYTE_API.post(f'/meetings/{meetingId}/livestreams', json=name.dict())
-    # cur.execute("INSERT INTO livestream_t (ts, meeting_id) VALUES (current_timestamp, %s)", (meetingId))
-    # conn.commit()
-    # cur.close()
-    # conn.close()
-    if response.status_code > 200:
-        raise HTTPException(status_code=response.status_code, detail=response.text)
-    return response.json()
-    # else:
-    #     conn.commit()
-    #     cur.close()
-    #     conn.close()
-    #     return {"message": "livestream already started"}
-
 class LivestreamsPayload(BaseModel):
     offset: str
 
 @app.post("/get_livestreams")
 async def get_livestreams(offset: LivestreamsPayload):
-    path = '/livestreams?'
+    path = '/livestreams?limit=100&'
     if offset.offset != '0':
         path = path + f'offset={offset.offset}'
     response = await DYTE_API.get(path)
     if response.status_code > 200:
         raise HTTPException(status_code=response.status_code, detail=response.text)
     return response.json()
+
+@app.post("/vote/{meeting_id}")
+async def vote(meeting_id: str, type: str):
+    conn = connect_to_db()
+    cur = conn.cursor()
+    cur.execute("CREATE TABLE IF NOT EXISTS votes(ts TIMESTAMP DEFAULT current_timestamp, meeting_id VARCHAR(100), likes INT DEFAULT 0, dislikes INT DEFAULT 0)")
+    payload = {}
+    if type == "INCR":
+        cur.execute("UPDATE votes SET likes = likes + 1 WHERE meeting_id = %s", (meeting_id))
+        payload = {"message": "Vote incremented successfully"}
+    else:
+        cur.execute("UPDATE votes SET dislikes = dislikes + 1 WHERE meeting_id = %s", (meeting_id))
+        payload = {"message": "Vote decremented successfully"}
+    conn.commit()
+    cur.close()
+    conn.close()
+    return payload
+
+@app.get("/stats/{meeting_id}")
+async def stats(meeting_id: str):
+    conn = connect_to_db()
+    cur = conn.cursor()
+    cur.execute("CREATE TABLE IF NOT EXISTS votes(ts TIMESTAMP DEFAULT current_timestamp, meeting_id VARCHAR(100), likes INT DEFAULT 0, dislikes INT DEFAULT 0)")
+    cur.execute("SELECT * FROM votes WHERE meeting_id = %s", (meeting_id))
+    row = cur.fetchone()
+    return row
     
 
 if __name__ == "__main__":
