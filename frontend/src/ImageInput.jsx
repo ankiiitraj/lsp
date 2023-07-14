@@ -1,6 +1,9 @@
 import { useState } from 'react';
 
-function ImageUploader({ setImgUploadedStatus }) {
+const SERVER_URL = process.env.REACT_APP_SERVER_URL || "http://localhost:8000"
+
+
+function ImageUploader({ setImgUploadedStatus, meetingId }) {
     const [selectedFile, setSelectedFile] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [uploadError, setUploadError] = useState(null);
@@ -11,6 +14,14 @@ function ImageUploader({ setImgUploadedStatus }) {
         setUploadSuccess(false);
         setUploadError(null);
     };
+
+    const sendImgLinkToServer = async (imageUrl) => {
+        await fetch(`${SERVER_URL}/img_link_upload/${meetingId}`, {
+            method: "POST",
+            body: JSON.stringify({ image_url: imageUrl }),
+            headers: { "Content-Type": "application/json" }
+        })
+    }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -34,7 +45,7 @@ function ImageUploader({ setImgUploadedStatus }) {
             }
 
             const data = await response.json();
-            window.localStorage.setItem("refImgUrl", data.data.link)
+            sendImgLinkToServer(data.data.link)
             setUploadSuccess(data.data.link);
             setImgUploadedStatus(true)
         } catch (error) {
@@ -46,7 +57,7 @@ function ImageUploader({ setImgUploadedStatus }) {
 
     return (
         <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
-            <div style={{ marginBottom: "10px" }}>Upload a photo of yours</div>
+            <div style={{ marginBottom: "10px" }}>Upload a thumbnail for the Livestream</div>
             <div>
                 <input type="file" id="file" onChange={handleFileChange} />
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '1rem' }}>

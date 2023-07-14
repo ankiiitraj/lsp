@@ -67,7 +67,7 @@ const Meet = () => {
         <div style={{ height: "96vh", width: "100vw", display: "flex" }}>
             {userToken &&
                 <>
-                    {isAdminBool ? <div style={{ width: "90vw" }}><DyteMeeting mode='fill' meeting={meeting} ref={meetingEl} /><LiveStreamInteraction meetingId={meetingId} /></div> : <div style={{ width: "100vw", height: "96vh" }}><DyteMeeting mode='fill' meeting={meeting} ref={meetingEl} /><LiveStreamInteraction meetingId={meetingId} /></div>}
+                    {isAdminBool ? <div style={{ width: "100vw", height: "90vh" }}><DyteMeeting mode='fill' meeting={meeting} ref={meetingEl} /><LiveStreamInteraction meetingId={meetingId} /></div> : <div style={{ width: "100vw", height: "96vh" }}><DyteMeeting mode='fill' meeting={meeting} ref={meetingEl} /><LiveStreamInteraction meetingId={meetingId} /></div>}
                 </>
             }
         </div>
