@@ -177,5 +177,34 @@ async def stats(meeting_id: str):
     return row
     
 
+class ImageLinkUploads(BaseModel):
+    image_url: str
+
+@app.post("/img_link_upload/{meeting_id}")
+async def stats(meeting_id: str, image_props: ImageLinkUploads):
+    image_url = image_props.image_url
+    conn = connect_to_db()
+    cur = conn.cursor()
+    cur.execute("CREATE TABLE IF NOT EXISTS image_urls(ts TIMESTAMP DEFAULT current_timestamp, meeting_id VARCHAR(100), img_url VARCHAR(256))")
+    cur.execute("INSERT INTO image_urls (ts, meeting_id, img_url) VALUES (current_timestamp, %s, %s)", (meeting_id, image_url,))
+    conn.commit()
+    cur.close()
+    conn.close()
+    return {"success": True}
+
+
+@app.post("/img_link_upload")
+async def stats():
+    conn = connect_to_db()
+    cur = conn.cursor()
+    cur.execute("CREATE TABLE IF NOT EXISTS image_urls(ts TIMESTAMP DEFAULT current_timestamp, meeting_id VARCHAR(100), img_url VARCHAR(256))")
+    cur.execute("SELECT img_url, meeting_id FROM image_urls")
+    rows = cur.fetchall()
+    conn.commit()
+    cur.close()
+    conn.close()
+    return rows
+
+
 if __name__ == "__main__":
     uvicorn.run("app:app", host="localhost", port=8000, log_level="debug", reload=True)
