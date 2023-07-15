@@ -26,3 +26,6 @@ yarn-error.log*
 .env
 /venv
 */build
+env
+/env
+*/env
