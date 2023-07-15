@@ -154,13 +154,13 @@ async def get_livestreams(offset: LivestreamsPayload):
 async def vote(meeting_id: str, type: str):
     conn = connect_to_db()
     cur = conn.cursor()
-    cur.execute("CREATE TABLE IF NOT EXISTS votes(ts TIMESTAMP DEFAULT current_timestamp, meeting_id VARCHAR(100), likes INT DEFAULT 0, dislikes INT DEFAULT 0)")
+    cur.execute("CREATE TABLE IF NOT EXISTS votes(ts TIMESTAMP DEFAULT current_timestamp, meeting_id VARCHAR(100) UNIQUE NOT NULL, likes INT DEFAULT 0, dislikes INT DEFAULT 0)")
     payload = {}
     if type == "INCR":
-        cur.execute("UPDATE votes SET likes = likes + 1 WHERE meeting_id = %s", (meeting_id))
+        cur.execute("INSERT INTO votes(ts, meeting_id, likes, dislikes) VALUES(current_timestamp, %s, 1, 0) ON CONFLICT(meeting_id) DO UPDATE SET likes = votes.likes + 1 WHERE votes.meeting_id = %s", (meeting_id, meeting_id,))
         payload = {"message": "Vote incremented successfully"}
     else:
-        cur.execute("UPDATE votes SET dislikes = dislikes + 1 WHERE meeting_id = %s", (meeting_id))
+        cur.execute("INSERT INTO votes(ts, meeting_id, likes, dislikes) VALUES(current_timestamp, %s, 0, 1) ON CONFLICT(meeting_id) DO UPDATE SET dislikes = votes.dislikes + 1 WHERE votes.meeting_id = %s", (meeting_id, meeting_id,))
         payload = {"message": "Vote decremented successfully"}
     conn.commit()
     cur.close()
@@ -171,11 +171,62 @@ async def vote(meeting_id: str, type: str):
 async def stats(meeting_id: str):
     conn = connect_to_db()
     cur = conn.cursor()
-    cur.execute("CREATE TABLE IF NOT EXISTS votes(ts TIMESTAMP DEFAULT current_timestamp, meeting_id VARCHAR(100), likes INT DEFAULT 0, dislikes INT DEFAULT 0)")
-    cur.execute("SELECT * FROM votes WHERE meeting_id = %s", (meeting_id))
+    cur.execute("CREATE TABLE IF NOT EXISTS votes(ts TIMESTAMP DEFAULT current_timestamp, meeting_id VARCHAR(100) UNIQUE NOT NULL, likes INT DEFAULT 0, dislikes INT DEFAULT 0)")
+    cur.execute("SELECT likes, dislikes FROM votes WHERE meeting_id = %s", (meeting_id))
     row = cur.fetchone()
     return row
+
+@app.post("/viewers_count/{meeting_id}")
+async def viewers_count(meeting_id: str):
+    conn = connect_to_db()
+    cur = conn.cursor()
+    cur.execute("CREATE TABLE IF NOT EXISTS viewers_count(ts TIMESTAMP DEFAULT current_timestamp, meeting_id VARCHAR(100) UNIQUE NOT NULL, views INT DEFAULT 0)")
+    cur.execute("INSERT INTO viewers_count(ts, meeting_id, views) VALUES(current_timestamp, %s, 1) ON CONFLICT(meeting_id) DO UPDATE SET views = viewers_count.views + 1 WHERE viewers_count.meeting_id = %s", (meeting_id, meeting_id,))
+    conn.commit()
+    cur.close()
+    conn.close()
+    return {"message": "success"}
+
+@app.get("/viewers_count")
+async def viewers_count_get():
+    conn = connect_to_db()
+    cur = conn.cursor()
+    cur.execute("CREATE TABLE IF NOT EXISTS viewers_count(ts TIMESTAMP DEFAULT current_timestamp, meeting_id VARCHAR(100), views INT DEFAULT 0)")
+    cur.execute("SELECT meeting_id, views FROM viewers_count")
+    rows = cur.fetchall()
+    if rows == None:
+        rows =[[]]
+    return rows
     
+
+class ImageLinkUploads(BaseModel):
+    image_url: str
+
+@app.post("/img_link_upload/{meeting_id}")
+async def stats(meeting_id: str, image_props: ImageLinkUploads):
+    image_url = image_props.image_url
+    conn = connect_to_db()
+    cur = conn.cursor()
+    cur.execute("CREATE TABLE IF NOT EXISTS image_urls(ts TIMESTAMP DEFAULT current_timestamp, meeting_id VARCHAR(100), img_url VARCHAR(256))")
+    cur.execute("INSERT INTO image_urls (ts, meeting_id, img_url) VALUES (current_timestamp, %s, %s)", (meeting_id, image_url,))
+    conn.commit()
+    cur.close()
+    conn.close()
+    return {"success": True}
+
+
+@app.post("/img_link_upload")
+async def stats():
+    conn = connect_to_db()
+    cur = conn.cursor()
+    cur.execute("CREATE TABLE IF NOT EXISTS image_urls(ts TIMESTAMP DEFAULT current_timestamp, meeting_id VARCHAR(100), img_url VARCHAR(256))")
+    cur.execute("SELECT img_url, meeting_id FROM image_urls")
+    rows = cur.fetchall()
+    conn.commit()
+    cur.close()
+    conn.close()
+    return rows
+
 
 if __name__ == "__main__":
     uvicorn.run("app:app", host="localhost", port=8000, log_level="debug", reload=True)
