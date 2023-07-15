@@ -29,10 +29,23 @@ const LivestreamBody = () => {
         })
         const thumbnails = await rawThumbnailsDataRes.json()
         const livestreamWithThumbnails = data.livestreams.map(item => ({...item, thumbnail: thumbnails.filter(subItem => item.meeting_id === subItem[1])[0] || [undefined]}))
-        console.log(livestreamWithThumbnails)
-        setStreams(livestreamWithThumbnails)
+        const rawViewsCountData = await fetch(`${SERVER_URL}/viewers_count`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        })
+        const views = await rawViewsCountData.json()
+        const streams = livestreamWithThumbnails.map(item => ({...item, views: views.filter(subItem => item.meeting_id === subItem[0])[0] || [0]}))
+        console.log(streams)
+        setStreams(streams)
         setOffset((cur) => {
             return cur + 20 < data.total ? cur + 20 : 'END'
+        })
+    }
+
+    const handleClick = (meetingId) => {
+        fetch(`${SERVER_URL}/viewers_count/${meetingId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" }
         })
     }
 
@@ -46,16 +59,16 @@ const LivestreamBody = () => {
             <div style={{ display: "flex", padding: "10px 100px", justifyContent: "center", flexWrap: "wrap" }}>
                 {streams && streams.map(item => {
                     return (item.meeting_id &&
-                        <Link style={{ textDecoration: 'none' }} to={`/meeting/${item.meeting_id}`}><div style={{ margin: "50px" }}>
+                        <Link style={{ textDecoration: 'none' }} onClick={() => handleClick(item.meeting_id)} to={`/meeting/${item.meeting_id}`}><div style={{ margin: "50px" }}>
                             <div><img src={item.thumbnail[0] || DATA.data[0].img} height={"150px"} style={{ aspectRatio: "1920/1080", borderRadius: "5px", border: "solid 0.5px gray" }} /></div>
                             <div style={{ display: "flex", alignItems: "center", color: "white" }}>
                                 <div style={{ margin: "4px 4px 4px 0px" }}>{item.name === null ? `Meeting: ${item.meeting_id}`.length > 18 ? `Meeting: ${item.meeting_id}`.substring(0, 15) + '...': `Meeting: ${item.meeting_id}` : item.name.length > 18 ? item.name.substring(0, 15) + '...' : item.title}</div>
                                 <div style={{ margin: "4px 4px 4px 6px", fontSize: "xx-small", backgroundColor: item.status === 'OFFLINE' ? 'gray' : 'red', padding: '1px 8px', borderRadius: "8px" }}>{item.status}</div>
                             </div>
                             <div style={{ display: "flex", fontSize: "small", color: "gray" }}>
-                                <div style={{ margin: "4px 4px 4px 0px" }}>{item.views || 13} viewers</div>
+                                <div style={{ margin: "4px 4px 4px 0px" }}>{item.views[1] || 0} viewers</div>
                                 <div style={{ margin: "4px 0px" }}>&#8226;</div>
-                                <div style={{ margin: "4px" }}>{item.likes || 23} upvotes</div>
+                                <div style={{ margin: "4px" }}>{item.views[1] || 23} upvotes</div>
                             </div>
                         </div>
                         </Link>
