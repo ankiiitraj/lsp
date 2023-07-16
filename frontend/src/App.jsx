@@ -15,7 +15,7 @@ function App() {
 	const createMeeting = async () => {
 		const res = await fetch(`${SERVER_URL}/meetings`, {
 			method: "POST",
-			body: JSON.stringify({ title: "Joint Entrance Examination" }),
+			body: JSON.stringify({ title: "Dyte Stream" }),
 			headers: { "Content-Type": "application/json" },
 		});
 		const resJson = await res.json();
