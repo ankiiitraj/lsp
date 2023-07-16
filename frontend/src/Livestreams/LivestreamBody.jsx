@@ -13,46 +13,6 @@ import {
 	TabPanels,
 } from "@chakra-ui/react";
 
-const DATA = {
-	data: [
-		{
-			title: "title1 some new vido that going to be viral",
-			img: "https://m.media-amazon.com/images/M/MV5BYzBiYjlhNGEtNjJkNi00NDc0LWIyMDMtMTg0NDUwZjcxNmY4XkEyXkFqcGdeQXVyMjg2MTMyNTM@._V1_.jpg",
-			status: "LIVE",
-			views: 100,
-			likes: 100,
-		},
-		{
-			title: "title1",
-			img: "https://m.media-amazon.com/images/M/MV5BYzBiYjlhNGEtNjJkNi00NDc0LWIyMDMtMTg0NDUwZjcxNmY4XkEyXkFqcGdeQXVyMjg2MTMyNTM@._V1_.jpg",
-			status: "LIVE",
-			views: 100,
-			likes: 100,
-		},
-		{
-			title: "title1",
-			img: "https://m.media-amazon.com/images/M/MV5BYzBiYjlhNGEtNjJkNi00NDc0LWIyMDMtMTg0NDUwZjcxNmY4XkEyXkFqcGdeQXVyMjg2MTMyNTM@._V1_.jpg",
-			status: "LIVE",
-			views: 100,
-			likes: 100,
-		},
-		{
-			title: "title1",
-			img: "https://m.media-amazon.com/images/M/MV5BYzBiYjlhNGEtNjJkNi00NDc0LWIyMDMtMTg0NDUwZjcxNmY4XkEyXkFqcGdeQXVyMjg2MTMyNTM@._V1_.jpg",
-			status: "LIVE",
-			views: 100,
-			likes: 100,
-		},
-		{
-			title: "title1",
-			img: "https://m.media-amazon.com/images/M/MV5BYzBiYjlhNGEtNjJkNi00NDc0LWIyMDMtMTg0NDUwZjcxNmY4XkEyXkFqcGdeQXVyMjg2MTMyNTM@._V1_.jpg",
-			status: "LIVE",
-			views: 100,
-			likes: 100,
-		},
-	],
-};
-
 const LivestreamBody = () => {
 	const [offset, setOffset] = useState(0);
 	const [streams, setStreams] = useState([]);
@@ -131,7 +91,9 @@ const LivestreamBody = () => {
 												<div style={{ margin: "50px" }}>
 													<div>
 														<img
-															src={DATA.data[0].img}
+															src={
+																"https://m.media-amazon.com/images/M/MV5BYzBiYjlhNGEtNjJkNi00NDc0LWIyMDMtMTg0NDUwZjcxNmY4XkEyXkFqcGdeQXVyMjg2MTMyNTM@._V1_.jpg"
+															}
 															height={"150px"}
 															style={{
 																aspectRatio: "1920/1080",
