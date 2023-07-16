@@ -151,29 +151,25 @@ async def get_livestreams(offset: LivestreamsPayload):
     return response.json()
 
 @app.post("/vote/{meeting_id}")
-async def vote(meeting_id: str, type: str):
+async def vote(meeting_id: str):
     conn = connect_to_db()
     cur = conn.cursor()
     cur.execute("CREATE TABLE IF NOT EXISTS votes(ts TIMESTAMP DEFAULT current_timestamp, meeting_id VARCHAR(100) UNIQUE NOT NULL, likes INT DEFAULT 0, dislikes INT DEFAULT 0)")
     payload = {}
-    if type == "INCR":
-        cur.execute("INSERT INTO votes(ts, meeting_id, likes, dislikes) VALUES(current_timestamp, %s, 1, 0) ON CONFLICT(meeting_id) DO UPDATE SET likes = votes.likes + 1 WHERE votes.meeting_id = %s", (meeting_id, meeting_id,))
-        payload = {"message": "Vote incremented successfully"}
-    else:
-        cur.execute("INSERT INTO votes(ts, meeting_id, likes, dislikes) VALUES(current_timestamp, %s, 0, 1) ON CONFLICT(meeting_id) DO UPDATE SET dislikes = votes.dislikes + 1 WHERE votes.meeting_id = %s", (meeting_id, meeting_id,))
-        payload = {"message": "Vote decremented successfully"}
+    cur.execute("INSERT INTO votes(ts, meeting_id, likes, dislikes) VALUES(current_timestamp, %s, 1, 0) ON CONFLICT(meeting_id) DO UPDATE SET likes = votes.likes + 1 WHERE votes.meeting_id = %s", (meeting_id, meeting_id,))
+    payload = {"message": "Vote incremented successfully"}
     conn.commit()
     cur.close()
     conn.close()
     return payload
 
-@app.get("/stats/{meeting_id}")
-async def stats(meeting_id: str):
+@app.get("/stats")
+async def stats():
     conn = connect_to_db()
     cur = conn.cursor()
     cur.execute("CREATE TABLE IF NOT EXISTS votes(ts TIMESTAMP DEFAULT current_timestamp, meeting_id VARCHAR(100) UNIQUE NOT NULL, likes INT DEFAULT 0, dislikes INT DEFAULT 0)")
-    cur.execute("SELECT likes, dislikes FROM votes WHERE meeting_id = %s", (meeting_id))
-    row = cur.fetchone()
+    cur.execute("SELECT likes, meeting_id FROM votes")
+    row = cur.fetchall()
     return row
 
 @app.post("/viewers_count/{meeting_id}")
@@ -201,14 +197,16 @@ async def viewers_count_get():
 
 class ImageLinkUploads(BaseModel):
     image_url: str
+    title: str
 
 @app.post("/img_link_upload/{meeting_id}")
 async def stats(meeting_id: str, image_props: ImageLinkUploads):
     image_url = image_props.image_url
+    title = image_props.title
     conn = connect_to_db()
     cur = conn.cursor()
-    cur.execute("CREATE TABLE IF NOT EXISTS image_urls(ts TIMESTAMP DEFAULT current_timestamp, meeting_id VARCHAR(100), img_url VARCHAR(256))")
-    cur.execute("INSERT INTO image_urls (ts, meeting_id, img_url) VALUES (current_timestamp, %s, %s)", (meeting_id, image_url,))
+    cur.execute("CREATE TABLE IF NOT EXISTS ls_metadata(ts TIMESTAMP DEFAULT current_timestamp, meeting_id VARCHAR(100), img_url VARCHAR(256), title VARCHAR(100))")
+    cur.execute("INSERT INTO ls_metadata (ts, meeting_id, img_url, title) VALUES (current_timestamp, %s, %s, %s)", (meeting_id, image_url, title,))
     conn.commit()
     cur.close()
     conn.close()
@@ -219,8 +217,8 @@ async def stats(meeting_id: str, image_props: ImageLinkUploads):
 async def stats():
     conn = connect_to_db()
     cur = conn.cursor()
-    cur.execute("CREATE TABLE IF NOT EXISTS image_urls(ts TIMESTAMP DEFAULT current_timestamp, meeting_id VARCHAR(100), img_url VARCHAR(256))")
-    cur.execute("SELECT img_url, meeting_id FROM image_urls")
+    cur.execute("CREATE TABLE IF NOT EXISTS ls_metadata(ts TIMESTAMP DEFAULT current_timestamp, meeting_id VARCHAR(100), img_url VARCHAR(256), title VARCHAR(100))")
+    cur.execute("SELECT img_url, meeting_id, title FROM ls_metadata")
     rows = cur.fetchall()
     conn.commit()
     cur.close()

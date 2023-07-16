@@ -13,19 +13,47 @@ import {
 	TabPanels,
 } from "@chakra-ui/react";
 
+
+const SERVER_URL = process.env.REACT_APP_SERVER_URL || "http://localhost:8000";
+
 const LivestreamBody = () => {
 	const [offset, setOffset] = useState(0);
 	const [streams, setStreams] = useState([]);
 
-	const setLivestreamsToState = async () => {
-		const { data } = await getLivestreams(offset);
-		console.log(data);
-		console.log(data.livestreams);
-		setStreams(data.livestreams);
-		setOffset((cur) => {
-			return cur + 20 < data.total ? cur + 20 : "END";
-		});
-	};
+	
+    const setLivestreamsToState = async () => {
+        const { data } = await getLivestreams(offset)
+        const rawThumbnailsDataRes = await fetch(`${SERVER_URL}/img_link_upload`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" }
+        })
+        const thumbnails = await rawThumbnailsDataRes.json()
+		const upvotesRawRes = await fetch(`${SERVER_URL}/stats`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        })
+        const upvotes = await upvotesRawRes.json()
+		console.log(upvotes)
+        const livestreamWithThumbnails = data.livestreams.map(item => ({...item, upvotes: upvotes.filter(subItem => item.meeting_id === subItem[1])[0] || [0], name: thumbnails.filter(subItem => item.meeting_id === subItem[1])[0] || [undefined, undefined, undefined], thumbnail: thumbnails.filter(subItem => item.meeting_id === subItem[1])[0] || [undefined]}))
+        const rawViewsCountData = await fetch(`${SERVER_URL}/viewers_count`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        })
+        const views = await rawViewsCountData.json()
+        const streams = livestreamWithThumbnails.map(item => ({...item, views: views.filter(subItem => item.meeting_id === subItem[0])[0] || [0]}))
+        console.log(streams)
+        setStreams(streams)
+        setOffset((cur) => {
+            return cur + 20 < data.total ? cur + 20 : 'END'
+        })
+    }
+
+    const handleClick = (meetingId) => {
+        fetch(`${SERVER_URL}/viewers_count/${meetingId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" }
+        })
+    }
 
 	useEffect(() => {
 		setLivestreamsToState();
@@ -92,7 +120,7 @@ const LivestreamBody = () => {
 													<div>
 														<img
 															src={
-																"https://m.media-amazon.com/images/M/MV5BYzBiYjlhNGEtNjJkNi00NDc0LWIyMDMtMTg0NDUwZjcxNmY4XkEyXkFqcGdeQXVyMjg2MTMyNTM@._V1_.jpg"
+																item.thumbnail[0] || "https://m.media-amazon.com/images/M/MV5BYzBiYjlhNGEtNjJkNi00NDc0LWIyMDMtMTg0NDUwZjcxNmY4XkEyXkFqcGdeQXVyMjg2MTMyNTM@._V1_.jpg"
 															}
 															height={"150px"}
 															style={{
@@ -110,11 +138,7 @@ const LivestreamBody = () => {
 														}}
 													>
 														<div style={{ margin: "4px 4px 4px 0px" }}>
-															{item.name === null
-																? "Unnamed Stream"
-																: item.title.length > 18
-																? item.name.substring(0, 15) + "..."
-																: item.title}
+															{!item.name[2] ? `Meeting: ${item.meeting_id}`.length > 18 ? `Meeting: ${item.meeting_id}`.substring(0, 15) + '...': `Meeting: ${item.meeting_id}` : item.name.length > 18 ? item.name[2].substring(0, 15) + '...' : item.name[2]}
 														</div>
 														<div
 															style={{
@@ -137,11 +161,11 @@ const LivestreamBody = () => {
 														}}
 													>
 														<div style={{ margin: "4px 4px 4px 0px" }}>
-															{item.views || 13} viewers
+															{item.views[1] || 0} views
 														</div>
 														<div style={{ margin: "4px 0px" }}>&#8226;</div>
 														<div style={{ margin: "4px" }}>
-															{item.likes || 23} upvotes
+															{item.upvotes[0] || 0} upvotes
 														</div>
 													</div>
 												</div>

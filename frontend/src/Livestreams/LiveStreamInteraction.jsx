@@ -6,9 +6,10 @@ import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 
 const SERVER_URL = process.env.REACT_APP_SERVER_URL || "http://localhost:8000";
 
-const Voting = (meetingId) => {
+const Voting = () => {
 	const handleVote = async (type) => {
-		const res = await fetch(`${SERVER_URL}/vote/${meetingId}`, {
+		const meetingId = window.location.pathname.split("/")[2]
+		fetch(`${SERVER_URL}/vote/${meetingId}`, {
 			method: "POST",
 			body: JSON.stringify({ type }),
 			headers: { "Content-Type": "application/json" },
@@ -25,15 +26,14 @@ const Voting = (meetingId) => {
 				paddingBottom={"20px"}
 			>
 				<Box>
-					{likeCount == 0 ? (
+					{likeCount >= 0 ? (
 						<Icon
 							as={FiThumbsUp}
 							boxSize={8}
 							sx={{ cursor: "pointer" }}
 							onClick={() => {
 								setLikeCount(1);
-								console.log(likeCount);
-								// handleVote("INCR");
+								handleVote("INCR");
 							}}
 						/>
 					) : (
@@ -41,10 +41,6 @@ const Voting = (meetingId) => {
 							as={FaThumbsUp}
 							boxSize={8}
 							sx={{ cursor: "pointer" }}
-							onClick={() => {
-								setLikeCount(0);
-								// handleVote("DECR");
-							}}
 						/>
 					)}
 					<Text ml={1}>Upvote</Text>

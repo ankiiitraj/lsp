@@ -19,7 +19,7 @@ function ImageUploader({ setImgUploadedStatus, meetingId }) {
 	const sendImgLinkToServer = async (imageUrl) => {
 		await fetch(`${SERVER_URL}/img_link_upload/${meetingId}`, {
 			method: "POST",
-			body: JSON.stringify({ image_url: imageUrl }),
+			body: JSON.stringify({ image_url: imageUrl, title: title }),
 			headers: { "Content-Type": "application/json" },
 		});
 	};

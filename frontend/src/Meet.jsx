@@ -3,8 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import { DyteMeeting, provideDyteDesignSystem } from "@dytesdk/react-ui-kit";
 import { useDyteClient } from "@dytesdk/react-web-core";
-
-import Heading from "./Heading";
 import { joinMeeting } from "./utils";
 import LiveStreamInteraction from "./Livestreams/LiveStreamInteraction";
 
@@ -81,14 +79,14 @@ const Meet = () => {
 			{userToken && (
 				<>
 					{isAdminBool ? (
-						<div style={{ width: "100vw" }}>
+						<div style={{ width: "100vw", height: "96vh" }}>
 							<DyteMeeting mode="fill" meeting={meeting} ref={meetingEl} />
-							<LiveStreamInteraction meetingId={meetingId} />
+							<LiveStreamInteraction meetingId={window.location.pathname.split("/")[2]} />
 						</div>
 					) : (
 						<div style={{ width: "100vw", height: "96vh" }}>
 							<DyteMeeting mode="fill" meeting={meeting} ref={meetingEl} />
-							<LiveStreamInteraction meetingId={meetingId} />
+							<LiveStreamInteraction meetingId={window.location.pathname.split("/")[2]} />
 						</div>
 					)}
 				</>
