@@ -26,7 +26,7 @@ const Voting = () => {
 				paddingBottom={"20px"}
 			>
 				<Box>
-					{likeCount >= 0 ? (
+					{likeCount == 0 ? (
 						<Icon
 							as={FiThumbsUp}
 							boxSize={8}
@@ -43,7 +43,7 @@ const Voting = () => {
 							sx={{ cursor: "pointer" }}
 						/>
 					)}
-					<Text ml={1}>Upvote</Text>
+					<Text ml={1} style={{ margin: "0px", fontSize: "13px"}}>Upvote</Text>
 				</Box>
 			</Flex>
 		</>
