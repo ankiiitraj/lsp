@@ -34,7 +34,7 @@ const LivestreamBody = () => {
 		})
 		const upvotes = await upvotesRawRes.json()
 		console.log(upvotes)
-		const livestreamWithThumbnails = data.livestreams.map(item => ({ ...item, upvotes: upvotes.filter(subItem => item.meeting_id === subItem[1])[0] || [0], name: thumbnails.filter(subItem => item.meeting_id === subItem[1])[0] || [undefined, undefined, undefined], thumbnail: thumbnails.filter(subItem => item.meeting_id === subItem[1])[0] || [undefined] }))
+		const livestreamWithThumbnails = data.map(item => ({ ...item, upvotes: upvotes.filter(subItem => item.meeting_id === subItem[1])[0] || [0], name: thumbnails.filter(subItem => item.meeting_id === subItem[1])[0] || [undefined, undefined, undefined], thumbnail: thumbnails.filter(subItem => item.meeting_id === subItem[1])[0] || [undefined] }))
 		const rawViewsCountData = await fetch(`${SERVER_URL}/viewers_count`, {
 			method: "GET",
 			headers: { "Content-Type": "application/json" }
@@ -189,7 +189,7 @@ const LivestreamBody = () => {
 							}}
 						>
 							{streams.length ? (
-								streams.sort((a, b) => a.upvotes[0] > b.upvotes[0]).map((item) => {
+								streams.map(item => item).sort((a, b) => b.upvotes[0] - a.upvotes[0]).map((item) => {
 									return (
 										item.meeting_id && (
 											<Link
