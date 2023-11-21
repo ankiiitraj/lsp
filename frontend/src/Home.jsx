@@ -35,7 +35,8 @@ function Home() {
 				display: "flex",
 				justifyContent: "center",
 				alignItems: "center",
-				color: "white  ",
+				color: "gray",
+				backgroundColor: "white",
 			}}
 		>
 			{meetingId && !window.location.pathname.split("/")[2] && (

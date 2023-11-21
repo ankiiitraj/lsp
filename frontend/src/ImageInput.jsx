@@ -63,14 +63,33 @@ function ImageUploader({ setImgUploadedStatus, meetingId }) {
 				justifyContent: "center",
 				flexDirection: "column",
 				alignItems: "center",
+				backgroundColor: "white",
 			}}
 		>
-			<div style={{ marginBottom: "10px" }}>Create a new livestream </div>
+			<div style={{ marginBottom: "10px", color: "black" }}>
+				Create a new livestream{" "}
+			</div>
+
 			<div>
-				<input type="file" id="file" onChange={handleFileChange} />
+				<span style={{ fontSize: "0.6em", color: "black" }}>
+					{"Upload Thumbnail* "}
+				</span>
+				<br />
+
+				<input
+					type="file"
+					id="file"
+					onChange={handleFileChange}
+					style={{ marginBottom: "20px" }}
+				/>
+				<br />
+				<span style={{ fontSize: "0.6em", marginTop: "20px", color: "black" }}>
+					{"Livestream Title* "}
+				</span>
+				<br />
 				<Input
 					placeholder="Title of the livestream"
-					sx={{ color: "white", marginTop: "20px" }}
+					sx={{ color: "white", marginTop: "10px", color: "black" }}
 					value={title}
 					onInput={(e) => {
 						setTitle(e.target.value);

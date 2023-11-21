@@ -12,11 +12,13 @@ const LivestreamHeader = () => {
 					justifyContent: "space-between",
 					alignItems: "center",
 					padding: "20px 50px",
+					backgroundColor: "white",
+					borderBottom: "1px solid #dbdbdb",
 				}}
 			>
 				<Link to="/">
 					<div>
-						<img src={DytestreamLogo} height={"30px"} />
+						<img src={DytestreamLogo} height={"35px"} />
 					</div>
 				</Link>
 				<Link style={{ textDecoration: "none" }} to={`/create-meeting`}>
